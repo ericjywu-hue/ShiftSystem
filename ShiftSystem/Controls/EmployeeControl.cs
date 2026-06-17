@@ -49,8 +49,8 @@ namespace ShiftSystem.Controls
         {
             if (dgvEmployee.SelectedRows.Count == 0) return;
             var row = dgvEmployee.SelectedRows[0];
-            txtName.Text     = row.Cells["colName"].Value?.ToString();
-            txtPhone.Text    = row.Cells["colPhone"].Value?.ToString();
+            txtName.Text = row.Cells["colName"].Value?.ToString();
+            txtPhone.Text = row.Cells["colPhone"].Value?.ToString();
             txtPosition.Text = row.Cells["colPosition"].Value?.ToString();
             btnUpdate.Enabled = true;
             btnDelete.Enabled = true;
@@ -63,8 +63,8 @@ namespace ShiftSystem.Controls
 
             DatabaseHelper.AddEmployee(new Employee
             {
-                Name     = txtName.Text.Trim(),
-                Phone    = txtPhone.Text.Trim(),
+                Name = txtName.Text.Trim(),
+                Phone = txtPhone.Text.Trim(),
                 Position = txtPosition.Text.Trim()
             });
             ClearFields();
@@ -78,9 +78,9 @@ namespace ShiftSystem.Controls
             int id = Convert.ToInt32(dgvEmployee.SelectedRows[0].Cells["colId"].Value);
             DatabaseHelper.UpdateEmployee(new Employee
             {
-                Id       = id,
-                Name     = txtName.Text.Trim(),
-                Phone    = txtPhone.Text.Trim(),
+                Id = id,
+                Name = txtName.Text.Trim(),
+                Phone = txtPhone.Text.Trim(),
                 Position = txtPosition.Text.Trim()
             });
             LoadData();
@@ -101,5 +101,50 @@ namespace ShiftSystem.Controls
         }
 
         private void btnClear_Click(object sender, EventArgs e) => ClearFields();
+
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog
+            {
+                Title = "選擇員工 CSV 檔案",
+                Filter = "CSV 檔案|*.csv|所有檔案|*.*"
+            };
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            try
+            {
+                int count = DatabaseHelper.ImportEmployeesFromCsv(ofd.FileName);
+                LoadData();
+                MessageBox.Show($"匯入完成！共新增 {count} 位員工。", "成功",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"匯入失敗：{ex.Message}", "錯誤",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnTemplate_Click(object sender, EventArgs e)
+        {
+            var sfd = new SaveFileDialog
+            {
+                Title = "儲存 CSV 範本",
+                Filter = "CSV 檔案|*.csv",
+                FileName = "員工範本.csv"
+            };
+            if (sfd.ShowDialog() != DialogResult.OK) return;
+
+            string[] sample =
+            {
+                "姓名,電話,職位",
+                "王小明,0912345678,店長",
+                "李小美,0922334455,正職",
+                "陳大山,0933445566,兼職"
+            };
+            System.IO.File.WriteAllLines(sfd.FileName, sample, System.Text.Encoding.UTF8);
+            MessageBox.Show($"範本已儲存：\n{sfd.FileName}\n\n請依格式填入員工資料後再用「匯入CSV」匯入。",
+                "完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 }

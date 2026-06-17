@@ -102,6 +102,43 @@ namespace ShiftSystem.Database
             }
         }
 
+        // 從 CSV 批次匯入員工，回傳成功匯入的筆數
+        public static int ImportEmployeesFromCsv(string filePath)
+        {
+            int count = 0;
+            var lines = File.ReadAllLines(filePath, System.Text.Encoding.UTF8);
+
+            using (var conn = new SQLiteConnection(ConnectionString))
+            {
+                conn.Open();
+                foreach (var rawLine in lines)
+                {
+                    string line = rawLine.Trim();
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    var parts = line.Split(',');
+                    string name = parts.Length > 0 ? parts[0].Trim() : "";
+                    if (string.IsNullOrWhiteSpace(name)) continue;
+
+                    // 跳過標題列（例如 "姓名,電話,職位" 或 "Name,Phone,Position"）
+                    if (name == "姓名" || name.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    string phone = parts.Length > 1 ? parts[1].Trim() : "";
+                    string position = parts.Length > 2 ? parts[2].Trim() : "";
+
+                    var cmd = new SQLiteCommand(
+                        "INSERT INTO Employee (Name, Phone, Position) VALUES (@n, @p, @pos);", conn);
+                    cmd.Parameters.AddWithValue("@n", name);
+                    cmd.Parameters.AddWithValue("@p", phone);
+                    cmd.Parameters.AddWithValue("@pos", position);
+                    cmd.ExecuteNonQuery();
+                    count++;
+                }
+            }
+            return count;
+        }
+
         public static void UpdateEmployee(Employee e)
         {
             using (var conn = new SQLiteConnection(ConnectionString))

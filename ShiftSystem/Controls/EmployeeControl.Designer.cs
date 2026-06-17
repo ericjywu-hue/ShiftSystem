@@ -33,6 +33,8 @@ namespace ShiftSystem.Controls
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.lblList = new System.Windows.Forms.Label();
             this.lblSearchHint = new System.Windows.Forms.Label();
+            this.btnImport = new System.Windows.Forms.Button();
+            this.btnTemplate = new System.Windows.Forms.Button();
 
             ((System.ComponentModel.ISupportInitialize)(this.dgvEmployee)).BeginInit();
             this.pnlRight.SuspendLayout();
@@ -52,7 +54,7 @@ namespace ShiftSystem.Controls
             this.dgvEmployee.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
                 this.colId, this.colName, this.colPhone, this.colPosition });
             this.dgvEmployee.Font = new System.Drawing.Font("Microsoft JhengHei", 9.5F);
-            this.dgvEmployee.Location = new System.Drawing.Point(10, 70);
+            this.dgvEmployee.Location = new System.Drawing.Point(10, 75);
             this.dgvEmployee.MultiSelect = false;
             this.dgvEmployee.Name = "dgvEmployee";
             this.dgvEmployee.ReadOnly = true;
@@ -103,10 +105,33 @@ namespace ShiftSystem.Controls
             this.txtSearch.TabIndex = 0;
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
 
+            // btnImport
+            this.btnImport.BackColor = System.Drawing.Color.FromArgb(100, 160, 100);
+            this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnImport.FlatAppearance.BorderSize = 0;
+            this.btnImport.Font = new System.Drawing.Font("Microsoft JhengHei", 9F);
+            this.btnImport.ForeColor = System.Drawing.Color.White;
+            this.btnImport.Location = new System.Drawing.Point(390, 38);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(95, 27);
+            this.btnImport.Text = "📥 匯入CSV";
+            this.btnImport.UseVisualStyleBackColor = false;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+
+            // btnTemplate
+            this.btnTemplate.Font = new System.Drawing.Font("Microsoft JhengHei", 9F);
+            this.btnTemplate.Location = new System.Drawing.Point(490, 38);
+            this.btnTemplate.Name = "btnTemplate";
+            this.btnTemplate.Size = new System.Drawing.Size(80, 27);
+            this.btnTemplate.Text = "下載範本";
+            this.btnTemplate.Click += new System.EventHandler(this.btnTemplate_Click);
+
             // pnlLeft
             this.pnlLeft.Controls.Add(this.dgvEmployee);
             this.pnlLeft.Controls.Add(this.txtSearch);
             this.pnlLeft.Controls.Add(this.lblSearchHint);
+            this.pnlLeft.Controls.Add(this.btnImport);
+            this.pnlLeft.Controls.Add(this.btnTemplate);
             this.pnlLeft.Controls.Add(this.lblList);
             this.pnlLeft.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlLeft.Name = "pnlLeft";
@@ -269,5 +294,7 @@ namespace ShiftSystem.Controls
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnImport;
+        private System.Windows.Forms.Button btnTemplate;
     }
 }
