@@ -61,7 +61,9 @@ namespace ShiftSystem.Controls
             this.lblEmp.Location = new System.Drawing.Point(10, 12);
             this.lblEmp.Text = "員工";
 
-            this.cmbEmployee.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEmployee.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
+            this.cmbEmployee.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cmbEmployee.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cmbEmployee.Font = new System.Drawing.Font("Microsoft JhengHei", 9.5F);
             this.cmbEmployee.Location = new System.Drawing.Point(10, 30);
             this.cmbEmployee.Name = "cmbEmployee";
@@ -174,7 +176,7 @@ namespace ShiftSystem.Controls
             this.dgvSchedule.AllowUserToDeleteRows = false;
             this.dgvSchedule.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvSchedule.BackgroundColor = System.Drawing.Color.White;
-            this.dgvSchedule.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dgvSchedule.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.dgvSchedule.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvSchedule.Font = new System.Drawing.Font("Microsoft JhengHei", 9.5F);
             this.dgvSchedule.MultiSelect = false;

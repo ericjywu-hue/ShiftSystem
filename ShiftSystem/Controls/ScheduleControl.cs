@@ -34,17 +34,35 @@ namespace ShiftSystem.Controls
             dgvSchedule.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 245, 255);
         }
 
+        private System.Collections.Generic.List<Models.Employee> employeeList;
+
         private void LoadComboBoxes()
         {
+            employeeList = DatabaseHelper.GetAllEmployees();
+
             cmbEmployee.DataSource = null;
-            cmbEmployee.DataSource = DatabaseHelper.GetAllEmployees();
+            cmbEmployee.Items.Clear();
+            cmbEmployee.DataSource = employeeList;
             cmbEmployee.DisplayMember = "Name";
             cmbEmployee.ValueMember = "Id";
+
+            var nameSource = new AutoCompleteStringCollection();
+            nameSource.AddRange(employeeList.Select(emp => emp.Name).ToArray());
+            cmbEmployee.AutoCompleteCustomSource = nameSource;
+            cmbEmployee.AutoCompleteSource = AutoCompleteSource.CustomSource;
 
             cmbShift.DataSource = null;
             cmbShift.DataSource = DatabaseHelper.GetAllShifts();
             cmbShift.DisplayMember = "ToString";
             cmbShift.ValueMember = "Id";
+        }
+
+        // 依目前輸入文字找出對應的員工（支援可輸入篩選的 ComboBox）
+        private Models.Employee FindSelectedEmployee()
+        {
+            if (employeeList == null) return null;
+            string text = cmbEmployee.Text.Trim();
+            return employeeList.FirstOrDefault(emp => emp.Name == text);
         }
 
         private void LoadSchedule()
@@ -197,13 +215,17 @@ namespace ShiftSystem.Controls
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            if (cmbEmployee.SelectedItem == null || cmbShift.SelectedItem == null)
-            { MessageBox.Show("請選擇員工和班別！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            var employee = FindSelectedEmployee();
+            if (employee == null || cmbShift.SelectedItem == null)
+            {
+                MessageBox.Show("請從清單中選擇有效的員工和班別！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            int empId = (int)cmbEmployee.SelectedValue;
+            int empId = employee.Id;
             int shiftId = (int)cmbShift.SelectedValue;
             string date = dtpDate.Value.ToString("yyyy-MM-dd");
-            string name = cmbEmployee.Text;
+            string name = employee.Name;
 
             if (DatabaseHelper.HasConflict(empId, date))
             {
