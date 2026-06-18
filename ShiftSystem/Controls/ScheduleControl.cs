@@ -268,5 +268,34 @@ namespace ShiftSystem.Controls
             DatabaseHelper.ExportToCsv(year, month, sfd.FileName);
             MessageBox.Show($"匯出成功！\n{sfd.FileName}", "完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
+        private void btnImportSchedule_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog
+            {
+                Title = "選擇排班 CSV 檔案",
+                Filter = "CSV 檔案|*.csv|所有檔案|*.*"
+            };
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            try
+            {
+                var (successCount, skipped) = DatabaseHelper.ImportScheduleFromCsv(ofd.FileName);
+                LoadSchedule();
+
+                string msg = $"匯入完成！成功新增 {successCount} 筆排班。";
+                if (skipped.Count > 0)
+                    msg += $"\n\n跳過 {skipped.Count} 筆：\n" + string.Join("\n", skipped.Take(10));
+                if (skipped.Count > 10)
+                    msg += $"\n...等共 {skipped.Count} 筆";
+
+                MessageBox.Show(msg, "匯入結果", MessageBoxButtons.OK,
+                    skipped.Count > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"匯入失敗：{ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

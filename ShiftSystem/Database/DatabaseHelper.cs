@@ -224,6 +224,74 @@ namespace ShiftSystem.Database
             }
         }
 
+        // 從 CSV 批次匯入排班，CSV 格式：姓名,班別,日期(yyyy-MM-dd)
+        // 回傳 (成功筆數, 跳過筆數含原因清單)
+        public static (int successCount, System.Collections.Generic.List<string> skipped) ImportScheduleFromCsv(string filePath)
+        {
+            int successCount = 0;
+            var skipped = new System.Collections.Generic.List<string>();
+            var lines = File.ReadAllLines(filePath, System.Text.Encoding.UTF8);
+
+            using (var conn = new SQLiteConnection(ConnectionString))
+            {
+                conn.Open();
+
+                // 先把員工姓名與班別名稱對應到 Id，避免每行都查一次
+                var empMap = new System.Collections.Generic.Dictionary<string, int>();
+                foreach (var emp in GetAllEmployees()) empMap[emp.Name] = emp.Id;
+
+                var shiftMap = new System.Collections.Generic.Dictionary<string, int>();
+                foreach (var sh in GetAllShifts()) shiftMap[sh.Name] = sh.Id;
+
+                foreach (var rawLine in lines)
+                {
+                    string line = rawLine.Trim();
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    var parts = line.Split(',');
+                    if (parts.Length < 3) continue;
+
+                    string name = parts[0].Trim();
+                    string shiftName = parts[1].Trim();
+                    string dateStr = parts[2].Trim();
+
+                    // 跳過標題列
+                    if (name == "姓名" || name.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    if (!empMap.TryGetValue(name, out int empId))
+                    {
+                        skipped.Add($"{line}（找不到員工：{name}）");
+                        continue;
+                    }
+                    if (!shiftMap.TryGetValue(shiftName, out int shiftId))
+                    {
+                        skipped.Add($"{line}（找不到班別：{shiftName}）");
+                        continue;
+                    }
+                    if (!DateTime.TryParse(dateStr, out _))
+                    {
+                        skipped.Add($"{line}（日期格式錯誤）");
+                        continue;
+                    }
+                    if (HasConflict(empId, dateStr))
+                    {
+                        skipped.Add($"{line}（{name} 當天已有排班，衝突跳過）");
+                        continue;
+                    }
+
+                    var cmd = new SQLiteCommand(
+                        "INSERT INTO Schedule (EmployeeId, ShiftId, Date) VALUES (@eid, @sid, @d);", conn);
+                    cmd.Parameters.AddWithValue("@eid", empId);
+                    cmd.Parameters.AddWithValue("@sid", shiftId);
+                    cmd.Parameters.AddWithValue("@d", dateStr);
+                    cmd.ExecuteNonQuery();
+                    successCount++;
+                }
+            }
+            return (successCount, skipped);
+        }
+
         public static DataTable GetScheduleByMonth(int year, int month)
         {
             var dt = new DataTable();

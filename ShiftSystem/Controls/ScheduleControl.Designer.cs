@@ -27,6 +27,7 @@ namespace ShiftSystem.Controls
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnExport = new System.Windows.Forms.Button();
             this.btnToggleView = new System.Windows.Forms.Button();
+            this.btnImportSchedule = new System.Windows.Forms.Button();
             this.calendarPanel = new System.Windows.Forms.TableLayoutPanel();
             this.dgvSchedule = new System.Windows.Forms.DataGridView();
 
@@ -51,7 +52,7 @@ namespace ShiftSystem.Controls
             this.pnlTop.Controls.Add(this.btnDelete);
             this.pnlTop.Controls.Add(this.btnExport);
             this.pnlTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlTop.Height = 115;
+            this.pnlTop.Height = 150;
             this.pnlTop.Name = "pnlTop";
             this.pnlTop.Padding = new System.Windows.Forms.Padding(10, 8, 10, 8);
 
@@ -164,6 +165,20 @@ namespace ShiftSystem.Controls
             this.btnToggleView.Click += new System.EventHandler(this.btnToggleView_Click);
             this.pnlTop.Controls.Add(this.btnToggleView);
 
+            // 第三排：批次匯入
+            this.btnImportSchedule.BackColor = System.Drawing.Color.FromArgb(150, 110, 190);
+            this.btnImportSchedule.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnImportSchedule.FlatAppearance.BorderSize = 0;
+            this.btnImportSchedule.Font = new System.Drawing.Font("Microsoft JhengHei", 9.5F);
+            this.btnImportSchedule.ForeColor = System.Drawing.Color.White;
+            this.btnImportSchedule.Location = new System.Drawing.Point(10, 110);
+            this.btnImportSchedule.Name = "btnImportSchedule";
+            this.btnImportSchedule.Size = new System.Drawing.Size(150, 35);
+            this.btnImportSchedule.Text = "📥 匯入排班CSV";
+            this.btnImportSchedule.UseVisualStyleBackColor = false;
+            this.btnImportSchedule.Click += new System.EventHandler(this.btnImportSchedule_Click);
+            this.pnlTop.Controls.Add(this.btnImportSchedule);
+
             // calendarPanel
             this.calendarPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.calendarPanel.Name = "calendarPanel";
@@ -204,7 +219,7 @@ namespace ShiftSystem.Controls
         private System.Windows.Forms.ComboBox cmbEmployee, cmbShift, cmbMonth;
         private System.Windows.Forms.DateTimePicker dtpDate;
         private System.Windows.Forms.NumericUpDown nudYear;
-        private System.Windows.Forms.Button btnAdd, btnDelete, btnExport, btnToggleView;
+        private System.Windows.Forms.Button btnAdd, btnDelete, btnExport, btnToggleView, btnImportSchedule;
         private System.Windows.Forms.DataGridView dgvSchedule;
         private System.Windows.Forms.TableLayoutPanel calendarPanel;
     }
